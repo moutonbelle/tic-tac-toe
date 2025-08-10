@@ -25,7 +25,7 @@ let board = (function () {
         board = [[null, null, null], [null, null, null], [null, null, null]];
     }
 
-    return { board, getBoard, placeMarker, clearBoard };
+    return { getBoard, placeMarker, clearBoard };
 
 })();
 
@@ -89,6 +89,22 @@ function newRenderer(root) {
     container.id = "container";
     root.prepend(container);
 
+    let boardContainer = document.createElement("div");
+    boardContainer.id = "board-container";
+    container.append(boardContainer);
+
+    for(let i = 0; i < 3; i++) {
+        for(let j = 0; j < 3; j++) {
+            let newCell = document.createElement("div");
+            newCell.dataset.row = i;
+            newCell.dataset.column = j;
+            newCell.classList.add("board-cell");
+            newCell.style.gridRow = i + 1;
+            newCell.style.gridColumn = j + 1;
+            boardContainer.append(newCell);
+        }
+    }
+
     let outputContainer = document.createElement("div");
     outputContainer.id = "output-container";
     container.append(outputContainer);
@@ -97,39 +113,50 @@ function newRenderer(root) {
     output.id = "output";
     outputContainer.append(output);
 
+    let playerInputs = document.createElement("div");
+    playerInputs.id = "player-inputs";
+
     let playerOneInputContainer = document.createElement("div");
-    playerOneInputContainer.id = "player-one-input-container";
         let playerOneInputLabel = document.createElement("label");
         playerOneInputLabel.textContent = "Player 1: ";
         let playerOneInput = document.createElement("input");
-        playerOneInput.classList.add("player-input");
     playerOneInputContainer.append(playerOneInputLabel, playerOneInput);
 
     let playerTwoInputContainer = document.createElement("div");
-    playerTwoInputContainer.id = "player-two-input-container";
         let playerTwoInputLabel = document.createElement("label");
         playerTwoInputLabel.textContent = "Player 2: ";
         let playerTwoInput = document.createElement("input");
-        playerTwoInput.classList.add("player-input");
     playerTwoInputContainer.append(playerTwoInputLabel, playerTwoInput);
 
     let submitButton = document.createElement("button");
     submitButton.type = "button";
     submitButton.textContent = "Create players";
 
+    playerInputs.append(playerOneInputContainer, playerTwoInputContainer, submitButton);
+    outputContainer.append(playerInputs);
+    playerInputs.style.display = "none";
+
     function askForPlayers() {
         console.log("Create your players!");
         output.textContent = "Create your players!";
-
-        outputContainer.append(playerOneInputContainer, playerTwoInputContainer, submitButton);
+        playerInputs.style.display = "flex";
         submitButton.addEventListener("click", () => {
             game.setPlayerOne(playerOneInput.value);
             game.setPlayerTwo(playerTwoInput.value);
+            resetPlayerInput();
         });
+    }
+
+    function resetPlayerInput () {
+        playerOneInput.value = "";
+        playerTwoInput.value = ""
+        playerInputs.style.display = "none";
     }
 
     function newTurn(activePlayer) {
         console.log(`It is ${activePlayer.getName()}'s turn. Please place an ${activePlayer.getMarker()}.`);
+
+        output.textContent = `It is ${activePlayer.getName()}'s turn. Please place an ${activePlayer.getMarker()}.`;
     }
 
     function declareWinner(player) {

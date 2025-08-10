@@ -29,8 +29,29 @@ div#output-container {
     border: 1px solid black;
     border-radius: 5px;
     padding: 1rem;
+}
 
+div#container,
+div#output-container,
+div#player-inputs {
     display: flex;
     flex-direction: column; 
     gap: 1rem;
+}
+
+div#board-container {
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    grid-template-rows: 100px 100px 100px;
+    gap: 5px;
+    background-color: black;
+    place-items: center;
+    align-self: flex-start;
+}
+
+div.board-cell {
+    background-color: white;
+    font-size: 2rem;
+    height: 100%;
+    width: 100%;
 }
