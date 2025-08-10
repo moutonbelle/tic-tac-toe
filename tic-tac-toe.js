@@ -1,5 +1,6 @@
 let board = (function () {
     let board = [[null, null, null], [null, null, null], [null, null, null]];
+    let moveCounter = 0;
 
     function getBoard() {
         return board.map(row => [...row]);
@@ -7,7 +8,13 @@ let board = (function () {
 
     function placeMarker(marker, row, column) {
         board[row][column] = marker;
+        moveCounter++;
         return checkForWinner(marker);
+    }
+
+    function isDraw() {
+        if (moveCounter === 9) return true;
+        return false;
     }
 
     function checkForWinner(marker) {
@@ -23,9 +30,10 @@ let board = (function () {
 
     function clearBoard() {
         board = [[null, null, null], [null, null, null], [null, null, null]];
+        moveCounter = 0;
     }
 
-    return { getBoard, placeMarker, clearBoard };
+    return { getBoard, placeMarker, clearBoard, isDraw };
 
 })();
 
@@ -60,8 +68,11 @@ let game = (function () {
             renderer.declareWinner(activePlayer);
         }
         else {
-            toggleActivePlayer();
-            renderer.newTurn(activePlayer);
+            if (board.isDraw()) renderer.declareDraw();
+            else {
+                toggleActivePlayer();
+                renderer.newTurn(activePlayer);
+            }
         }
     }
 
@@ -179,11 +190,19 @@ function newRenderer(root) {
         output.textContent = `It is ${activePlayer.getName()}'s turn. Please place an ${activePlayer.getMarker()}.`;
     }
 
-    function declareWinner(player) {
+    function declareWinner (player) {
         console.log(`${player.getName()} wins!`);
         console.log("Reset for another game?");
 
         output.textContent = `${player.getName()} wins! Reset for another game?`;
+        resetButton.style.display = "block";
+    }
+
+    function declareDraw () {
+        console.log(`It's a draw.`);
+        console.log("Reset for another game?");
+
+        output.textContent = `It's a draw. Reset for another game?`;
         resetButton.style.display = "block";
     }
 
@@ -194,7 +213,7 @@ function newRenderer(root) {
         boardContainer.style.display = "none";
     }
 
-    return { askForPlayers, newTurn, declareWinner, clearBoard }
+    return { askForPlayers, newTurn, declareWinner, declareDraw, clearBoard }
 }
 
 game.play(document.querySelector("body"));
