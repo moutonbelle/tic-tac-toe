@@ -81,7 +81,7 @@ let game = (function () {
         renderer.askForPlayers();
     }
 
-    function getActivePlayer () {return activePlayer;}
+    function getActivePlayer() { return activePlayer; }
 
     return { play, setPlayerOne, setPlayerTwo, getActivePlayer, placeMarker, reset };
 })();
@@ -108,9 +108,9 @@ function newRenderer(root) {
     }
 
     boardContainer.addEventListener("click", e => {
-            if (!e.target.classList.contains("board-cell")) return;
-            e.target.textContent = game.getActivePlayer().getMarker();
-            game.placeMarker(e.target.dataset.row, e.target.dataset.column);
+        if (!e.target.classList.contains("board-cell")) return;
+        e.target.textContent = game.getActivePlayer().getMarker();
+        game.placeMarker(e.target.dataset.row, e.target.dataset.column);
     });
 
     boardContainer.style.display = "none";
@@ -141,21 +141,31 @@ function newRenderer(root) {
     let submitButton = document.createElement("button");
     submitButton.type = "button";
     submitButton.textContent = "Create players";
+    submitButton.addEventListener("click", () => {
+        game.setPlayerOne(playerOneInput.value);
+        game.setPlayerTwo(playerTwoInput.value);
+        resetPlayerInput();
+        boardContainer.style.display = "grid";
+    });
 
     playerInputs.append(playerOneInputContainer, playerTwoInputContainer, submitButton);
     outputContainer.append(playerInputs);
     playerInputs.style.display = "none";
 
+    let resetButton = document.createElement("button");
+    resetButton.type = "button";
+    resetButton.textContent = "Reset game";
+    outputContainer.append(resetButton);
+    resetButton.addEventListener("click", () => {
+        resetButton.style.display = "none";
+        game.reset();
+    });
+    resetButton.style.display = "none";
+
     function askForPlayers() {
         console.log("Create your players!");
         output.textContent = "Create your players!";
         playerInputs.style.display = "flex";
-        submitButton.addEventListener("click", () => {
-            game.setPlayerOne(playerOneInput.value);
-            game.setPlayerTwo(playerTwoInput.value);
-            resetPlayerInput();
-            boardContainer.style.display = "grid";
-        });
     }
 
     function resetPlayerInput() {
@@ -174,6 +184,8 @@ function newRenderer(root) {
         console.log(`${player.getName()} wins!`);
         console.log("Reset for another game?");
 
+        output.textContent = `${player.getName()} wins! Reset for another game?`;
+        resetButton.style.display = "block";
     }
 
     function placeMarker(marker, row, column) {
@@ -183,6 +195,9 @@ function newRenderer(root) {
 
     function clearBoard() {
         console.log("Board cleared!");
+
+        document.querySelectorAll(".board-cell").forEach(cell => cell.textContent = "");
+        boardContainer.style.display = "none";
     }
 
     return { askForPlayers, newTurn, declareWinner, placeMarker, clearBoard }
