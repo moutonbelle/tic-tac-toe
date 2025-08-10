@@ -119,6 +119,7 @@ function newRenderer(root) {
 
     boardContainer.addEventListener("click", e => {
         if (!e.target.classList.contains("board-cell")) return;
+        if (e.target.textContent !== "") return;
         e.target.textContent = game.getActivePlayer().getMarker();
         game.placeMarker(e.target.dataset.row, e.target.dataset.column);
     });
