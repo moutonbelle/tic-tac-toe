@@ -56,7 +56,6 @@ let game = (function () {
 
     function placeMarker(row, column) {
         let winner = board.placeMarker(activePlayer.getMarker(), row, column);
-        renderer.placeMarker(activePlayer.getMarker(), row, column);
         if (winner) {
             renderer.declareWinner(activePlayer);
         }
@@ -188,11 +187,6 @@ function newRenderer(root) {
         resetButton.style.display = "block";
     }
 
-    function placeMarker(marker, row, column) {
-        console.log("Marker placed!");
-        console.log(...board.getBoard());
-    }
-
     function clearBoard() {
         console.log("Board cleared!");
 
@@ -200,7 +194,7 @@ function newRenderer(root) {
         boardContainer.style.display = "none";
     }
 
-    return { askForPlayers, newTurn, declareWinner, placeMarker, clearBoard }
+    return { askForPlayers, newTurn, declareWinner, clearBoard }
 }
 
 game.play(document.querySelector("body"));
