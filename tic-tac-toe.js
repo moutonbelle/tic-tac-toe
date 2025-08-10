@@ -3,6 +3,7 @@
 GAMEBOARD
 -- domBoard = container of DOM board
 -- Board [2][2]
+-- winner = null | player
 -- placeMarker (player, posX, posY) {
     board[posX][posY] = player.marker
     return checkWinner(player) 
@@ -25,6 +26,8 @@ PLAYER
 -- name
 -- marker
 
+-- getNextMove
+
 GAME
 -- player1
 -- player2
@@ -33,8 +36,8 @@ GAME
 -- play (domParent)
     Create players
     Draw new board (gameboard.drawNewBoard(domParent))
-    while !winner
-        playRound(activePlayer)
+    while !gameBoard.winner
+        activePlayer.getNextMove();
         toggle(activePlayer) -- this.activePlayer = blah;
     display winner
     draw reset screen
@@ -44,3 +47,47 @@ GAME
     gameboard.placeMarker
 
 */
+
+let gameParent = document.querySelector("body");
+
+let board = (function () {
+    let board = [[null, null, null], [null, null, null], [null, null, null]];
+
+    function getBoard () {
+        return readOnlyBoard = board.map(row => [...row]);
+    }
+
+    function placeMarker (marker, row, column) {
+        board[row][column] = marker;
+        return checkForWinner(marker);
+    }
+
+    function checkForWinner (marker) {
+        let threeInARow = marker + marker + marker;
+        for (let i = 0; i < board.length; i++) {
+            if (board[i][0] + board[i][1] + board[i][2] === threeInARow) return true;
+            if (board[0][i] + board[1][i] + board[2][i] === threeInARow) return true;
+        }
+        if (board[0][0] + board[1][1] + board[2][2] === threeInARow) return true;
+        if (board[0][2] + board[1][1] + board[2][0] === threeInARow) return true;
+        return false;
+    }
+
+    function clearBoard () {
+        board = [[null, null, null], [null, null, null], [null, null, null]];        
+    }
+
+    return {getBoard, placeMarker, clearBoard};
+
+})();
+
+function newPlayer (name, marker) {
+    return {name, marker}
+}
+
+let game = (function () {
+    let player1, player2, activePlayer;
+    let board;
+
+
+})();
