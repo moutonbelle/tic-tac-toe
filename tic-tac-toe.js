@@ -54,7 +54,7 @@ let board = (function () {
     let board = [[null, null, null], [null, null, null], [null, null, null]];
 
     function getBoard () {
-        return readOnlyBoard = board.map(row => [...row]);
+        return board.map(row => [...row]);
     }
 
     function placeMarker (marker, row, column) {
@@ -77,7 +77,7 @@ let board = (function () {
         board = [[null, null, null], [null, null, null], [null, null, null]];        
     }
 
-    return {getBoard, placeMarker, clearBoard};
+    return {board, getBoard, placeMarker, clearBoard};
 
 })();
 
@@ -87,7 +87,44 @@ function newPlayer (name, marker) {
 
 let game = (function () {
     let player1, player2, activePlayer;
-    let board;
 
+    function setPlayerOne (name) {
+        player1 = newPlayer(name, "x");
+        activePlayer = player1;
+    }
 
+    function setPlayerTwo (name) {
+        player2 = newPlayer(name, "0");
+    }
+
+    function reset () {
+        player1 = null;
+        player2 = null;
+        activePlayer = null;
+        board.clearBoard();
+    }
+
+    return {setPlayerOne, setPlayerTwo, reset};
 })();
+
+function newRenderer (root) {
+    function askForPlayers () {
+        console.log("Creat your players!");
+    }
+
+    function newTurn (activePlayer) {
+        console.log(`It is ${player.name}'s turn. Please place an ${player.marker}.`);
+    }
+    
+    function declareWinner (player) {
+        console.log(`${player.name} wins!`);
+    }
+
+    function placeMarker (marker, row, column) {
+        console.log("Marker placed!");
+    }
+
+    function clearBoard () {
+        console.log("Board cleared!");
+    }
+}
