@@ -1,53 +1,3 @@
-/*
-
-GAMEBOARD
--- domBoard = container of DOM board
--- Board [2][2]
--- winner = null | player
--- placeMarker (player, posX, posY) {
-    board[posX][posY] = player.marker
-    return checkWinner(player) 
-}
--- checkWinner (player) {
-    for each row, check if row sum == 3x player.marker
-        if so, return player
-    else for each column check if column sum == 3x player.marker ("xxx")
-        if so, return player
-    else if [0][0] + [1][1] + [2][2] == 3x player marker
-        return palyer
-    else if [2][2] + [1][1] + [0][0] == 3x player marker
-        return player
-    ellse return null
--- drawNewBoard () {
-    create 3x rows of 3x columns
-}
-
-PLAYER
--- name
--- marker
-
--- getNextMove
-
-GAME
--- player1
--- player2
--- activePlayer
-
--- play (domParent)
-    Create players
-    Draw new board (gameboard.drawNewBoard(domParent))
-    while !gameBoard.winner
-        activePlayer.getNextMove();
-        toggle(activePlayer) -- this.activePlayer = blah;
-    display winner
-    draw reset screen
-
--- playRound ()
-    Solicit player choice
-    gameboard.placeMarker
-
-*/
-
 let gameParent = document.querySelector("body");
 
 let board = (function () {
@@ -82,11 +32,19 @@ let board = (function () {
 })();
 
 function newPlayer (name, marker) {
-    return {name, marker}
+    function getName () {return name;};
+    function getMarker () {return marker;};
+    
+    return {getName, getMarker}
 }
 
 let game = (function () {
-    let player1, player2, activePlayer;
+    let player1, player2, activePlayer, renderer;
+
+    function play(root) {
+        renderer = newRenderer(root);
+        renderer.askForPlayers();
+    }
 
     function setPlayerOne (name) {
         player1 = newPlayer(name, "x");
@@ -94,37 +52,62 @@ let game = (function () {
     }
 
     function setPlayerTwo (name) {
-        player2 = newPlayer(name, "0");
+        player2 = newPlayer(name, "o");
+        renderer.newTurn(activePlayer);
+    }
+
+    function placeMarker (row, column) {
+        let winner = board.placeMarker(activePlayer.getMarker(), row, column);
+        renderer.placeMarker(activePlayer.getMarker(), row, column);
+        if (winner) {
+            renderer.declareWinner(activePlayer);
+        }
+        else {
+            toggleActivePlayer();
+            renderer.newTurn(activePlayer);
+        }
+    }
+
+    function toggleActivePlayer() {
+        if (activePlayer === player1) activePlayer = player2; else activePlayer = player1;
     }
 
     function reset () {
         player1 = null;
         player2 = null;
         activePlayer = null;
+        
         board.clearBoard();
+        renderer.clearBoard();
+
+        renderer.askForPlayers();
     }
 
-    return {setPlayerOne, setPlayerTwo, reset};
+    return {play, setPlayerOne, setPlayerTwo, placeMarker, reset};
 })();
 
 function newRenderer (root) {
     function askForPlayers () {
-        console.log("Creat your players!");
+        console.log("Create your players!");
     }
 
     function newTurn (activePlayer) {
-        console.log(`It is ${player.name}'s turn. Please place an ${player.marker}.`);
+        console.log(`It is ${activePlayer.getName()}'s turn. Please place an ${activePlayer.getMarker()}.`);
     }
     
     function declareWinner (player) {
-        console.log(`${player.name} wins!`);
+        console.log(`${player.getName()} wins!`);
+        console.log("Reset for another game?");
     }
 
     function placeMarker (marker, row, column) {
         console.log("Marker placed!");
+        console.log(...board.getBoard());
     }
 
     function clearBoard () {
         console.log("Board cleared!");
     }
+
+    return {askForPlayers, newTurn, declareWinner, placeMarker, clearBoard}
 }
