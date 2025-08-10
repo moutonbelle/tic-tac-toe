@@ -174,7 +174,6 @@ function newRenderer(root) {
     resetButton.style.display = "none";
 
     function askForPlayers() {
-        console.log("Create your players!");
         output.textContent = "Create your players!";
         playerInputs.style.display = "flex";
     }
@@ -186,30 +185,20 @@ function newRenderer(root) {
     }
 
     function newTurn(activePlayer) {
-        console.log(`It is ${activePlayer.getName()}'s turn. Please place an ${activePlayer.getMarker()}.`);
-
         output.textContent = `It is ${activePlayer.getName()}'s turn. Please place an ${activePlayer.getMarker()}.`;
     }
 
     function declareWinner (player) {
-        console.log(`${player.getName()} wins!`);
-        console.log("Reset for another game?");
-
         output.textContent = `${player.getName()} wins! Reset for another game?`;
         resetButton.style.display = "block";
     }
 
     function declareDraw () {
-        console.log(`It's a draw.`);
-        console.log("Reset for another game?");
-
         output.textContent = `It's a draw. Reset for another game?`;
         resetButton.style.display = "block";
     }
 
     function clearBoard() {
-        console.log("Board cleared!");
-
         document.querySelectorAll(".board-cell").forEach(cell => cell.textContent = "");
         boardContainer.style.display = "none";
     }
