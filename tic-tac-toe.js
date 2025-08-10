@@ -81,7 +81,9 @@ let game = (function () {
         renderer.askForPlayers();
     }
 
-    return { play, setPlayerOne, setPlayerTwo, placeMarker, reset };
+    function getActivePlayer () {return activePlayer;}
+
+    return { play, setPlayerOne, setPlayerTwo, getActivePlayer, placeMarker, reset };
 })();
 
 function newRenderer(root) {
@@ -93,8 +95,8 @@ function newRenderer(root) {
     boardContainer.id = "board-container";
     container.append(boardContainer);
 
-    for(let i = 0; i < 3; i++) {
-        for(let j = 0; j < 3; j++) {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
             let newCell = document.createElement("div");
             newCell.dataset.row = i;
             newCell.dataset.column = j;
@@ -104,6 +106,14 @@ function newRenderer(root) {
             boardContainer.append(newCell);
         }
     }
+
+    boardContainer.addEventListener("click", e => {
+            if (!e.target.classList.contains("board-cell")) return;
+            e.target.textContent = game.getActivePlayer().getMarker();
+            game.placeMarker(e.target.dataset.row, e.target.dataset.column);
+    });
+
+    boardContainer.style.display = "none";
 
     let outputContainer = document.createElement("div");
     outputContainer.id = "output-container";
@@ -117,15 +127,15 @@ function newRenderer(root) {
     playerInputs.id = "player-inputs";
 
     let playerOneInputContainer = document.createElement("div");
-        let playerOneInputLabel = document.createElement("label");
-        playerOneInputLabel.textContent = "Player 1: ";
-        let playerOneInput = document.createElement("input");
+    let playerOneInputLabel = document.createElement("label");
+    playerOneInputLabel.textContent = "Player 1: ";
+    let playerOneInput = document.createElement("input");
     playerOneInputContainer.append(playerOneInputLabel, playerOneInput);
 
     let playerTwoInputContainer = document.createElement("div");
-        let playerTwoInputLabel = document.createElement("label");
-        playerTwoInputLabel.textContent = "Player 2: ";
-        let playerTwoInput = document.createElement("input");
+    let playerTwoInputLabel = document.createElement("label");
+    playerTwoInputLabel.textContent = "Player 2: ";
+    let playerTwoInput = document.createElement("input");
     playerTwoInputContainer.append(playerTwoInputLabel, playerTwoInput);
 
     let submitButton = document.createElement("button");
@@ -144,10 +154,11 @@ function newRenderer(root) {
             game.setPlayerOne(playerOneInput.value);
             game.setPlayerTwo(playerTwoInput.value);
             resetPlayerInput();
+            boardContainer.style.display = "grid";
         });
     }
 
-    function resetPlayerInput () {
+    function resetPlayerInput() {
         playerOneInput.value = "";
         playerTwoInput.value = ""
         playerInputs.style.display = "none";
@@ -162,6 +173,7 @@ function newRenderer(root) {
     function declareWinner(player) {
         console.log(`${player.getName()} wins!`);
         console.log("Reset for another game?");
+
     }
 
     function placeMarker(marker, row, column) {
